@@ -1,0 +1,26 @@
+{
+  "name": "pavelmaksimov25/repository-cleaner",
+  "description": "Closes open PRs in the repository and removes all existing branches except the main one",
+  "authors": [
+    {
+      "name": "Pavlo Maksymov",
+      "email": "pavlo.maksymov@spryker.com"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "ext-json": "*",
+    "knplabs/github-api": "^3.11",
+    "guzzlehttp/guzzle": "^7.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "RepoCleaner\\": "src/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true
+    }
+  }
+}
