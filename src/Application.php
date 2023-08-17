@@ -24,10 +24,11 @@ class Application
         string $repositoryOwner,
         array $whitelistedBranches = ['master', 'main', 'rc', 'internal'],
     ): void {
+        // todo :: close only upgradebility PRs
         $prs = $this->fetchOpenPrsInTheRepository($repositoryName, $repositoryOwner);
         foreach ($prs as $pr) {
-            if (in_array($pr['base']['ref'], $whitelistedBranches, true)) {
-                echo $pr['base']['ref'] . ' is whitelisted, skipping...' . PHP_EOL;
+            if (in_array($pr['head']['ref'], $whitelistedBranches, true)) {
+                echo $pr['head']['ref'] . ' is whitelisted, skipping...' . PHP_EOL;
                 continue;
             }
 
