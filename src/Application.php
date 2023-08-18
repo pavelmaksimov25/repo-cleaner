@@ -82,10 +82,10 @@ class Application
 
     private function isPrCreatedByUpgrader(array $pr): bool
     {
-        if (!isset($pr['user']['login']) && $pr['user']['login'] === 'spryker-bot') {
+        if (!isset($pr['user']['login']) && $pr['user']['login'] !== 'spryker-bot') {
             return false;
         }
 
-        return isset($pr['head']['ref']) && str_contains($pr['head']['ref'], 'upgrade/') === false;
+        return isset($pr['head']['ref']) && str_contains($pr['head']['ref'], 'upgrade/');
     }
 }
