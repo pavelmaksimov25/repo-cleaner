@@ -24,11 +24,14 @@ class Application
         string $repositoryOwner,
         array $whitelistedBranches = ['master', 'main', 'rc', 'internal'],
     ): void {
-        // todo :: close only upgradebility PRs
-        $prs = $this->fetchOpenPrsInTheRepository($repositoryName, $repositoryOwner);
-        foreach ($prs as $pr) {
+        foreach ($this->fetchOpenPrsInTheRepository($repositoryName, $repositoryOwner) as $pr) {
             if (in_array($pr['head']['ref'], $whitelistedBranches, true)) {
                 echo $pr['head']['ref'] . ' is whitelisted, skipping...' . PHP_EOL;
+                continue;
+            }
+
+            if (!$this->isPrCreatedByUpgrader($pr)) {
+                echo $pr['head']['ref'] . ' is not created by the Upgrader, skipping...' . PHP_EOL;
                 continue;
             }
 
@@ -75,5 +78,14 @@ class Application
         string $branchName
     ): void {
         $this->client->api('git')->references()->remove($repositoryOwner, $repositoryName, 'heads/'.$branchName);
+    }
+
+    private function isPrCreatedByUpgrader(array $pr): bool
+    {
+        if (!isset($pr['user']['login']) && $pr['user']['login'] === 'spryker-bot') {
+            return false;
+        }
+
+        return isset($pr['head']['ref']) && str_contains($pr['head']['ref'], 'upgrade/') === false;
     }
 }
