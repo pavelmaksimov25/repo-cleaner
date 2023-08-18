@@ -64,6 +64,7 @@ class ApplicationTest extends TestCase
         $prData = [
             ['number' => 1, 'head' => ['ref' => 'master'], 'user' => ['login' => 'other-user']],
             ['number' => 2, 'head' => ['ref' => 'upgrade/branch'], 'user' => ['login' => 'spryker-bot']],
+            ['number' => 3, 'head' => ['ref' => 'upgradebot/branch'], 'user' => ['login' => 'spryker-bot']],
         ];
 
         $repositoryName = 'repoName';

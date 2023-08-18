@@ -86,6 +86,10 @@ class Application
             return false;
         }
 
-        return isset($pr['head']['ref']) && str_contains($pr['head']['ref'], 'upgrade/');
+        if (!isset($pr['head']['ref'])) {
+            return false;
+        }
+
+        return str_contains($pr['head']['ref'], 'upgrade/') || str_contains($pr['head']['ref'], 'upgradebot/');
     }
 }
