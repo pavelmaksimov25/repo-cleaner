@@ -22,7 +22,7 @@ class Application
     public function run(
         string $repositoryName,
         string $repositoryOwner,
-        array $whitelistedBranches = ['master', 'main', 'rc', 'internal'],
+        array  $whitelistedBranches = ['master', 'main', 'rc', 'internal'],
     ): void {
         foreach ($this->fetchOpenPrsInTheRepository($repositoryName, $repositoryOwner) as $pr) {
             if (in_array($pr['head']['ref'], $whitelistedBranches, true)) {
@@ -38,6 +38,8 @@ class Application
             $this->removePR($repositoryName, $repositoryOwner, $pr['number']);
             $this->removeBranch($repositoryName, $repositoryOwner, $pr['head']['ref']);
         }
+
+        $this->removeUpgraderBranches($repositoryName, $repositoryOwner);
     }
 
     /**
@@ -61,9 +63,28 @@ class Application
     private function removePR(
         string $repositoryName,
         string $repositoryOwner,
-        int $prNumber
+        int    $prNumber
     ): void {
         $this->client->api('pull_request')->update($repositoryOwner, $repositoryName, $prNumber, ['state' => 'closed']);
+    }
+
+    /**
+     * @param string $repositoryName
+     * @param string $repositoryOwner
+     * @return void
+     */
+    private function removeUpgraderBranches(
+        string $repositoryName,
+        string $repositoryOwner
+    ): void {
+        $branches = $this->client->api('git')->references()->branches($repositoryOwner, $repositoryName);
+
+        foreach ($branches as $branch) {
+            if (str_contains($branch['ref'], 'upgradebot/')) {
+                $branchName = str_replace('refs/heads/', '', $branch['ref']);
+                $this->removeBranch($repositoryName, $repositoryOwner, $branchName);
+            }
+        }
     }
 
     /**
@@ -77,9 +98,13 @@ class Application
         string $repositoryOwner,
         string $branchName
     ): void {
-        $this->client->api('git')->references()->remove($repositoryOwner, $repositoryName, 'heads/'.$branchName);
+        $this->client->api('git')->references()->remove($repositoryOwner, $repositoryName, 'heads/' . $branchName);
     }
 
+    /**
+     * @param array $pr
+     * @return bool
+     */
     private function isPrCreatedByUpgrader(array $pr): bool
     {
         if (!isset($pr['user']['login']) && $pr['user']['login'] !== 'spryker-bot') {
