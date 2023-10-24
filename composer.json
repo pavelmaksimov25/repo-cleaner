@@ -1,12 +1,7 @@
 {
   "name": "spryker-sdk/repository-cleaner",
   "description": "Closes open PRs in the repository and removes all existing branches except the main one",
-  "authors": [
-    {
-      "name": "Pavlo Maksymov",
-      "email": "pavlo.maksymov@spryker.com"
-    }
-  ],
+  "license": "proprietary",
   "require": {
     "php": "^8.0",
     "ext-json": "*",
